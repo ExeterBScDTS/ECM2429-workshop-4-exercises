@@ -5,7 +5,7 @@ from playergui import PlayerGUI
 from musicdb import MusicDB
 from wavplay import WavPlay
 from threading import Thread
-from queue import Queue
+from queue import Empty, Queue
 from time import sleep
 
 
@@ -49,9 +49,11 @@ class DatabaseThread(Thread):
             sleep(0.5)
             queueOut.put("db")
 
-
 if __name__ == "__main__":
-    logger.info("Starting")
+    logging.basicConfig(level=logging.DEBUG)
+    logger.debug("Starting")
+    # Create the GUI, but don't run mainloop() yet
+    gui = PlayerGUI()
     feedbackQueue = Queue()
     playQueue = Queue()
     player = PlayerThread(args=(playQueue, feedbackQueue))
@@ -59,5 +61,15 @@ if __name__ == "__main__":
     dbQueue = Queue()
     db = DatabaseThread(args=(dbQueue, feedbackQueue))
     db.start()
-    while True:
-        print(feedbackQueue.get())
+
+    def body():
+        try:
+            msg = feedbackQueue.get_nowait()
+            print(msg)
+            print(gui.state())
+        except Empty:
+            pass
+
+    gui.set_after(20, body)
+    gui.mainloop()
+
