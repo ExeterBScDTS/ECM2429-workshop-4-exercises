@@ -3,36 +3,61 @@
 import logging
 from playergui import PlayerGUI
 from musicdb import MusicDB
-import threading
+from wavplay import WavPlay
+from threading import Thread
+from queue import Queue
 from time import sleep
-import queue
+
 
 logger = logging.getLogger(__name__)
 
 
-class ThreadedBody:
-    """_summary_
+class PlayerThread(Thread):
     """
-    def __init__(self) -> None:
-        """_summary_
+    """
+    def __init__(self, group=None, target=None, name=None,
+                 args=None, *kwargs, daemon=True):
+        super().__init__(group, target, name, args, kwargs, daemon=daemon)
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
         """
-        self.thread = threading.Thread(target=self.worker_thread)
-        self.run = True
-        self.thread.start()
-
-    def worker_thread(self):
-
-        while self.run:
+        """
+        queueIn: Queue = self.args[0]
+        queueOut: Queue = self.args[1]
+        while True:
             sleep(2.5)
-            print("thread")    
+            queueOut.put("player")
+
+
+class DatabaseThread(Thread):
+    """
+    """
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs=None, daemon=True):
+        super().__init__(group, target, name, args, kwargs, daemon=daemon)
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        """
+        """
+        queueIn: Queue = self.args[0]
+        queueOut: Queue = self.args[1]
+        while True:
+            sleep(0.5)
+            queueOut.put("db")
+
 
 if __name__ == "__main__":
     logger.info("Starting")
-    thread = ThreadedBody()
-    for i in range(10):
-        sleep(1.8)
-        print(i)
-    thread.run = False
-
-
-
+    feedbackQueue = Queue()
+    playQueue = Queue()
+    player = PlayerThread(args=(playQueue, feedbackQueue))
+    player.start()
+    dbQueue = Queue()
+    db = DatabaseThread(args=(dbQueue, feedbackQueue))
+    db.start()
+    while True:
+        print(feedbackQueue.get())
