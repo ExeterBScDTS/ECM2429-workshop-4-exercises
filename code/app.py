@@ -20,12 +20,15 @@ class PlayerThread(Thread):
         super().__init__(group, target, name, args, kwargs, daemon=daemon)
         self.args = args
         self.kwargs = kwargs
+        self.player = WavPlay()
 
     def run(self):
         """
         """
         queueIn: Queue = self.args[0]
         queueOut: Queue = self.args[1]
+        with open("sample.wav", "rb") as f:
+            self.player.play(f.read())
         while True:
             sleep(2.5)
             queueOut.put("player")

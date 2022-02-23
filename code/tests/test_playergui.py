@@ -6,5 +6,6 @@ import playergui
 def gui():
     return playergui.PlayerGUI()
 
+
 def test_PlayerGUI(gui):
     assert isinstance(gui, playergui.PlayerGUI)
