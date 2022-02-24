@@ -34,9 +34,20 @@ class WavPlay:
             rate=wf.getframerate(),
             output=True)
      
-        for data in self._frames(wf):
+        """ for data in self._frames(wf):
             logger.debug(f"data {len(data)}")
             stream.write(data)
+        """
+
+        self._moredata = True
+        while self._moredata:
+            data = next(self._frames(wf), None)
+            if data:
+                logger.debug(f"data {len(data)}")
+                stream.write(data)
+            else:
+               self._moredata = False
+ 
         # stop stream
         stream.stop_stream()
         stream.close()
