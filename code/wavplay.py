@@ -13,12 +13,12 @@ class WavPlay:
     def __init__(self):
         self.p = pyaudio.PyAudio()
         self.paused = False
-  
+ 
     def __del__(self):
         # close PyAudio
         logger.warning("close")
         self.p.terminate()
-        
+       
     def play(self, audio_in: bytes):
         """Play WAV audio data
 
@@ -33,11 +33,6 @@ class WavPlay:
             channels=wf.getnchannels(),
             rate=wf.getframerate(),
             output=True)
-     
-        """ for data in self._frames(wf):
-            logger.debug(f"data {len(data)}")
-            stream.write(data)
-        """
 
         self._moredata = True
         while self._moredata:
@@ -46,8 +41,8 @@ class WavPlay:
                 logger.debug(f"data {len(data)}")
                 stream.write(data)
             else:
-               self._moredata = False
- 
+                self._moredata = False
+
         # stop stream
         stream.stop_stream()
         stream.close()
@@ -56,9 +51,8 @@ class WavPlay:
         # read data
         data = wf.readframes(WavPlay.CHUNK)
         while len(data) > 0:
-            if not self.paused:
-                yield data
-                data = wf.readframes(WavPlay.CHUNK)
+            yield data
+            data = wf.readframes(WavPlay.CHUNK)
 
 
 if __name__ == "__main__":
