@@ -19,40 +19,37 @@ class WavPlay:
         logger.warning("close")
         self.p.terminate()
        
-    def play(self, audio_in: bytes):
+    def load(self, audio_in: bytes):
         """Play WAV audio data
 
         :param audio_in: audio_in is bytes containing WAV audio.
         :type audio_in: bytes
         """
 
-        wf = wave.open(io.BytesIO(audio_in), 'rb') 
+        self._wf = wave.open(io.BytesIO(audio_in), 'rb')
 
-        stream = self.p.open(
-            format=self.p.get_format_from_width(wf.getsampwidth()),
-            channels=wf.getnchannels(),
-            rate=wf.getframerate(),
+        self._stream = self.p.open(
+            format=self.p.get_format_from_width(self._wf.getsampwidth()),
+            channels=self._wf.getnchannels(),
+            rate=self._wf.getframerate(),
             output=True)
 
-        self._moredata = True
-        while self._moredata:
-            data = next(self._frames(wf), None)
-            if data:
-                logger.debug(f"data {len(data)}")
-                stream.write(data)
-            else:
-                self._moredata = False
+    def play(self):
+        data = next(self._frames(), None)
+        if data:
+            logger.debug(f"data {len(data)}")
+            self._stream.write(data)
+        else:
+            # stop stream
+            self._stream.stop_stream()
+            self._stream.close()          
 
-        # stop stream
-        stream.stop_stream()
-        stream.close()
-
-    def _frames(self, wf):
+    def _frames(self):
         # read data
-        data = wf.readframes(WavPlay.CHUNK)
+        data = self._wf.readframes(WavPlay.CHUNK)
         while len(data) > 0:
             yield data
-            data = wf.readframes(WavPlay.CHUNK)
+            data = self._wf.readframes(WavPlay.CHUNK)
 
 
 if __name__ == "__main__":

@@ -28,10 +28,11 @@ class PlayerThread(Thread):
         queueIn: Queue = self.args[0]
         queueOut: Queue = self.args[1]
         with open("sample.wav", "rb") as f:
-            self.player.play(f.read())
+            self.player.load(f.read())
         while True:
-            sleep(0.5)
-            queueOut.put("player")
+            self.player.play()
+            #sleep(0.5)
+            queueOut.put("playing")
 
 
 class DatabaseThread(Thread):
