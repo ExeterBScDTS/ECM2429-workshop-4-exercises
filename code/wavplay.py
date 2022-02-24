@@ -12,6 +12,7 @@ class WavPlay:
 
     def __init__(self):
         self.p = pyaudio.PyAudio()
+        self._wf = None
         self.paused = False
  
     def __del__(self):
@@ -39,17 +40,19 @@ class WavPlay:
         if data:
             logger.debug(f"data {len(data)}")
             self._stream.write(data)
-        else:
+        elif self._wf:
             # stop stream
             self._stream.stop_stream()
-            self._stream.close()          
+            self._stream.close()
+            self._wf = None  
 
     def _frames(self):
         # read data
-        data = self._wf.readframes(WavPlay.CHUNK)
-        while len(data) > 0:
-            yield data
+        if self._wf:
             data = self._wf.readframes(WavPlay.CHUNK)
+            while len(data) > 0:
+                yield data
+                data = self._wf.readframes(WavPlay.CHUNK)
 
 
 if __name__ == "__main__":
