@@ -30,9 +30,20 @@ class PlayerThread(Thread):
         with open("sample.wav", "rb") as f:
             self.player.load(f.read())
         while True:
-            self.player.play()
-            #sleep(0.5)
-            queueOut.put("playing")
+            try:
+                msg = queueIn.get_nowait()
+                if msg == "pause":
+                    self.player.paused = True
+                elif msg == "play":
+                    self.player.paused = False
+            except Empty:
+                pass
+            if self.player.paused:
+                queueOut.put("paused")
+                sleep(0.1)
+            else:
+                self.player.play()
+                queueOut.put("playing")
 
 
 class DatabaseThread(Thread):
@@ -72,16 +83,18 @@ if __name__ == "__main__":
     # because this main thread is the gui thread.  We should not
     # directly access objects in other threads.
     def body():
+        if gui._state == "paused":
+            print("Doing pause")
+            playQueue.put("pause")
+        else:
+            playQueue.put("play")
+
         try:
             msg = feedbackQueue.get_nowait()
-            print(msg)
-            print(gui.state())
-            if gui.state == "paused":
-                print("Doing pause")
-                playQueue.put("pause")
+            logger.debug(f"feedback: {msg}")
         except Empty:
             pass
 
-    gui.set_after(20, body)
+    gui.set_after(200, body)
     gui.mainloop()
 
