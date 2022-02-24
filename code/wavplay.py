@@ -34,18 +34,19 @@ class WavPlay:
             rate=wf.getframerate(),
             output=True)
      
-        self._playframes(wf, stream)
+        for data in self._frames(wf):
+            logger.debug(f"data {len(data)}")
+            stream.write(data)
         # stop stream
         stream.stop_stream()
         stream.close()
 
-    def _playframes(self, wf, stream):
+    def _frames(self, wf):
         # read data
         data = wf.readframes(WavPlay.CHUNK)
-        # play stream
         while len(data) > 0:
             if not self.paused:
-                stream.write(data)
+                yield data
                 data = wf.readframes(WavPlay.CHUNK)
 
 

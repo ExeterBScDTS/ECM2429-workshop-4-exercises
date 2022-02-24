@@ -1,4 +1,5 @@
 import logging
+from queue import Queue
 from tkinter import Tk, ttk, Button, StringVar, Label
 
 logger = logging.getLogger(__name__)

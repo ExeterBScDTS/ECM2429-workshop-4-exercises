@@ -30,7 +30,7 @@ class PlayerThread(Thread):
         with open("sample.wav", "rb") as f:
             self.player.play(f.read())
         while True:
-            sleep(2.5)
+            sleep(0.5)
             queueOut.put("player")
 
 
@@ -49,7 +49,7 @@ class DatabaseThread(Thread):
         queueIn: Queue = self.args[0]
         queueOut: Queue = self.args[1]
         while True:
-            sleep(0.5)
+            sleep(2)
             queueOut.put("db")
 
 if __name__ == "__main__":
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     # Create the GUI, but don't run mainloop() yet
     gui = PlayerGUI()
     feedbackQueue = Queue()
+    gui.feedback = feedbackQueue
     playQueue = Queue()
     player = PlayerThread(args=(playQueue, feedbackQueue))
     player.start()
@@ -65,11 +66,18 @@ if __name__ == "__main__":
     db = DatabaseThread(args=(dbQueue, feedbackQueue))
     db.start()
 
+
+    # Note that we can access methods and properties of the gui
+    # because this main thread is the gui thread.  We should not
+    # directly access objects in other threads.
     def body():
         try:
             msg = feedbackQueue.get_nowait()
             print(msg)
             print(gui.state())
+            if gui.state == "paused":
+                print("Doing pause")
+                playQueue.put("pause")
         except Empty:
             pass
 
