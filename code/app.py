@@ -63,6 +63,8 @@ class DatabaseThread(Thread):
         super().__init__(group, target, name, args, kwargs, daemon=daemon)
         self.args = args
         self.kwargs = kwargs
+        # Open DB in read-only mode
+        self.db = MusicDB("file:music.db?mode=ro")
 
     def run(self):
         """
