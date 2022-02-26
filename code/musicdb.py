@@ -27,3 +27,11 @@ class MusicDB:
         con = sqlite3.connect(self.__connection_uri, uri=True)
         con.close()
         pass
+
+    def get_album_names(self) -> tuple:
+        logger.debug("get_album_names")
+        return tuple()
+
+    def get_track_names(self, album_name: str) -> tuple:
+        logger.debug("get_track_names")
+        return tuple()

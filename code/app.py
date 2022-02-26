@@ -25,7 +25,7 @@ class PlayerThread(Thread):
     """
     """
     def __init__(self, group=None, target=None, name=None,
-                 args=None, *kwargs, daemon=True):
+                 args=(), kwargs=None, daemon=True):
         super().__init__(group, target, name, args, kwargs, daemon=daemon)
         self.args = args
         self.kwargs = kwargs
@@ -72,7 +72,9 @@ class DatabaseThread(Thread):
         queueIn: Queue = self.args[0]
         queueOut: Queue = self.args[1]
         while True:
-            sleep(2)
+            msg = queueIn.get()
+            if msg["cmd"] == "albums":
+                self.db.get_album_names()
             queueOut.put("db")
 
 
@@ -94,7 +96,6 @@ if __name__ == "__main__":
     # because this main thread is the gui thread.  We should not
     # directly access objects in other threads.
 
- 
     def body():
         if gui._state == "paused":
             playQueue.put({"cmd": "pause"})
@@ -107,10 +108,10 @@ if __name__ == "__main__":
         except Empty:
             pass
 
-   
     # If no database available can insert data to play like this -
     with open("sample.wav", "rb") as f:
         playQueue.put({"cmd": "load", "data": f.read()})
-    
+
+    dbQueue.put({"cmd": "albums"})
     gui.set_after(200, body)
     gui.mainloop()
