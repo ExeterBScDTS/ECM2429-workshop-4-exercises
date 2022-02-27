@@ -13,6 +13,7 @@ it can simplify the design and implementation of software and produce better per
 
 <https://docs.python.org/3/library/queue.html>
 
+<https://docs.python.org/3/library/tkinter.html#threading-model>
 
 ## Reading
 

@@ -1,6 +1,6 @@
 import logging
 from queue import Queue
-from tkinter import Tk, ttk, Button, StringVar, Label
+from tkinter import Tk, ttk, Button, StringVar, Label, Listbox
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ class PlayerGUI:
         """Constructor for a simple tkinter GUI
         """
         self.__root = Tk()
-        self.__root.title("Countdown")
+        self.__root.title(__name__)
 
         self.start_button = Button(self.__root, text="Play", command=self.play)
         self.start_button.pack()
@@ -20,20 +20,20 @@ class PlayerGUI:
         self.stop_button = Button(self.__root, text="Pause", command=self.pause)
         self.stop_button.pack()
 
-        self.countdown_text = StringVar()
-        self.countdown_label = Label(self.__root, textvar=self.countdown_text)
-        self.countdown_label.pack()
+        #self.countdown_text = StringVar()
+        #self.countdown_label = Label(self.__root, textvar=self.countdown_text)
+        #self.countdown_label.pack()
+
+        self.album_list = Listbox(self.__root, height=10)
+        self.album_list.pack()
+
+        self.track_list = Listbox(self.__root, height=10)
+        self.track_list.pack()
+
+        self.playlist = Listbox(self.__root, height=10)
+        self.playlist.pack()
 
         self._state = "ready"
-
-    def countdown(self):
-        # after() does not block, so do this first.
-        # Called after a number of milliseconds.
-        # Choose a rate that makes sense for your application.
-        self.__root.after(500, self.countdown)
-        if self.deadline:
-            remaining = self.deadline - datetime.now()
-            self.countdown_text.set(remaining)
 
     def play(self):
         """The play action.

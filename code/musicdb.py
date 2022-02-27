@@ -30,8 +30,20 @@ class MusicDB:
 
     def get_album_names(self) -> tuple:
         logger.debug("get_album_names")
-        return tuple()
+        with sqlite3.connect(self.__connection_uri, uri=True) as con:
+            cur = con.cursor()
+            cur.execute('SELECT DISTINCT album FROM tunes')
+            albums = []
+            for i in cur:
+                albums.append(i[0])
+        return tuple(albums)
 
     def get_track_names(self, album_name: str) -> tuple:
         logger.debug("get_track_names")
-        return tuple()
+        with sqlite3.connect(self.__connection_uri, uri=True) as con:
+            cur = con.cursor()
+            cur.execute('SELECT name FROM tunes WHERE album=?', (album_name,))
+            tracks = []
+            for i in cur:
+                tracks.append(i[0])
+        return tuple(tracks)
