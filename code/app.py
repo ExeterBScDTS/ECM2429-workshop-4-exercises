@@ -8,18 +8,8 @@ import threading
 from threading import Thread
 from queue import Empty, Queue
 from time import sleep
-import sys
 
 logger = logging.getLogger(__name__)
-
-"""
-def exitfn(args):
-    print("exitfn")
-    print(args)
-    sys.exit(1)
-
-threading.excepthook = exitfn
-"""
 
 class PlayerThread(Thread):
     """
@@ -77,12 +67,12 @@ class DatabaseThread(Thread):
             msg = queueIn.get()
             queueIn.task_done()
             if msg["cmd"] == "albums":
-                a = self.db.get_album_names()
-                queueOut.put({"from": "db", "cmd": "albums", "data": a})
+                albums = self.db.get_album_names()
+                queueOut.put({"from": "db", "cmd": "albums", "data": albums})
             elif msg["cmd"] == "tracks":
                 tracks = self.db.get_track_names(msg["data"])
+                queueOut.put({"from": "db", "cmd": "tracks", "data": tracks})
                 print(tracks)
-            #queueOut.put("db")
 
 
 if __name__ == "__main__":
@@ -108,7 +98,9 @@ if __name__ == "__main__":
             playQueue.put({"cmd": "pause"})
         else:
             playQueue.put({"cmd": "play"})
-            # dbQueue.put({"cmd": "albums"})
+        if gui.db_cmd:
+            dbQueue.put({"cmd": gui.db_cmd, "data": gui.db_data})
+            gui.db_cmd = None
         try:
             msg = feedbackQueue.get_nowait()
             feedbackQueue.task_done()
@@ -116,13 +108,16 @@ if __name__ == "__main__":
             if msg["from"] == "db":
                 if msg["cmd"] == "albums":
                     gui.set_albums(msg["data"])
+                elif msg["cmd"] == "tracks":
+                    logger.debug(f"SETTING: {msg}")
+                    gui.set_tracks(msg["data"])
             
         except Empty:
             pass
 
     # If no database available can insert data to play like this -
-    # with open("sample.wav", "rb") as f:
-    #    playQueue.put({"cmd": "load", "data": f.read()})
+    with open("sample.wav", "rb") as f:
+        playQueue.put({"cmd": "load", "data": f.read()})
 
     dbQueue.put({"cmd": "albums"})
     gui.set_after(200, body)

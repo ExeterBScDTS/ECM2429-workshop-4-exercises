@@ -36,7 +36,8 @@ class PlayerGUI:
         self.playlist.bind("<<ListboxSelect>>", self.playlist_sel)
 
         self.playlist.pack()
-
+        self.db_cmd = None
+        self.db_data = None
         self._state = "ready"
 
     def set_albums(self, albums):
@@ -47,6 +48,8 @@ class PlayerGUI:
         print(evt)
         sel = self.album_list.curselection()[0]
         logger.debug(f"selected {self.albums[sel]}")
+        self.db_cmd = "tracks"
+        self.db_data = self.albums[sel]
 
     def set_tracks(self, tracks):
         self.tracks = tracks
