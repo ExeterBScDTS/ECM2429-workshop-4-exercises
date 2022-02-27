@@ -50,11 +50,11 @@ class PlayerThread(Thread):
             except Empty:
                 pass
             if self.player.paused:
-                queueOut.put("paused")
+                #queueOut.put("paused")
                 sleep(0.1)
             else:
                 self.player.play()
-                queueOut.put("playing")
+                #queueOut.put("playing")
 
 
 class DatabaseThread(Thread):
@@ -78,11 +78,11 @@ class DatabaseThread(Thread):
             queueIn.task_done()
             if msg["cmd"] == "albums":
                 a = self.db.get_album_names()
-                queueOut.put({"from": "db", "albums": a})
+                queueOut.put({"from": "db", "cmd": "albums", "data": a})
             elif msg["cmd"] == "tracks":
                 tracks = self.db.get_track_names(msg["data"])
                 print(tracks)
-            queueOut.put("db")
+            #queueOut.put("db")
 
 
 if __name__ == "__main__":
@@ -108,11 +108,14 @@ if __name__ == "__main__":
             playQueue.put({"cmd": "pause"})
         else:
             playQueue.put({"cmd": "play"})
-            dbQueue.put({"cmd": "albums"})
+            # dbQueue.put({"cmd": "albums"})
         try:
             msg = feedbackQueue.get_nowait()
             feedbackQueue.task_done()
             logger.debug(f"feedback: {msg}")
+            if msg["from"] == "db":
+                if msg["cmd"] == "albums":
+                    gui.set_albums(msg["data"])
             
         except Empty:
             pass

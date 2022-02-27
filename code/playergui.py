@@ -20,13 +20,8 @@ class PlayerGUI:
         self.stop_button = Button(self.__root, text="Pause", command=self.pause)
         self.stop_button.pack()
 
-        #self.countdown_text = StringVar()
-        #self.countdown_label = Label(self.__root, textvar=self.countdown_text)
-        #self.countdown_label.pack()
-
-        albums = ["a", "b"]
-        albums_var = StringVar(value=albums)
-        self.album_list = Listbox(self.__root, height=10, listvariable=albums_var)
+        self.albums_var = StringVar(value=[])
+        self.album_list = Listbox(self.__root, height=10, listvariable=self.albums_var)
         self.album_list.pack()
         self.album_list.bind("<<ListboxSelect>>", self.album_sel)
         #lbox.bind("<Double-1>", lambda e: invokeAction(lbox.curselection()))
@@ -43,9 +38,14 @@ class PlayerGUI:
 
         self._state = "ready"
 
+    def set_albums(self, albums):
+        self.albums = albums
+        self.albums_var.set(albums)
+
     def album_sel(self, evt):
         print(evt)
-        print(self.album_list.curselection())
+        sel = self.album_list.curselection()[0]
+        logger.debug(f"selected {self.albums[sel]}")
 
     def play(self):
         """The play action.
