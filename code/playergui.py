@@ -24,16 +24,28 @@ class PlayerGUI:
         #self.countdown_label = Label(self.__root, textvar=self.countdown_text)
         #self.countdown_label.pack()
 
-        self.album_list = Listbox(self.__root, height=10)
+        albums = ["a", "b"]
+        albums_var = StringVar(value=albums)
+        self.album_list = Listbox(self.__root, height=10, listvariable=albums_var)
         self.album_list.pack()
+        self.album_list.bind("<<ListboxSelect>>", self.album_sel)
+        #lbox.bind("<Double-1>", lambda e: invokeAction(lbox.curselection()))
 
-        self.track_list = Listbox(self.__root, height=10)
+        tracks = []
+        tracks_var = StringVar(value=tracks)
+        self.track_list = Listbox(self.__root, height=10, listvariable=tracks_var)
         self.track_list.pack()
 
-        self.playlist = Listbox(self.__root, height=10)
+        playlist = []
+        playlist_var = StringVar(value=playlist)
+        self.playlist = Listbox(self.__root, height=10, listvariable=playlist_var)
         self.playlist.pack()
 
         self._state = "ready"
+
+    def album_sel(self, evt):
+        print(evt)
+        print(self.album_list.curselection())
 
     def play(self):
         """The play action.

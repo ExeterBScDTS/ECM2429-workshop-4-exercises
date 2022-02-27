@@ -30,6 +30,7 @@ class PlayerThread(Thread):
         self.args = args
         self.kwargs = kwargs
         self.player = WavPlay()
+        self.player.paused = True
 
     def run(self):
         """
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     gui.feedback = feedbackQueue
     playQueue = Queue()
     player = PlayerThread(args=(playQueue, feedbackQueue))
-    #player.start()
+    player.start()
     dbQueue = Queue()
     db = DatabaseThread(args=(dbQueue, feedbackQueue))
     db.start()

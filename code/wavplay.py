@@ -44,7 +44,9 @@ class WavPlay:
             # stop stream
             self._stream.stop_stream()
             self._stream.close()
-            self._wf = None  
+            self._wf = None
+        else:
+            self.paused = True
 
     def _frames(self):
         # read data
