@@ -26,14 +26,15 @@ class PlayerGUI:
         self.album_list.bind("<<ListboxSelect>>", self.album_sel)
         #lbox.bind("<Double-1>", lambda e: invokeAction(lbox.curselection()))
 
-        tracks = []
-        tracks_var = StringVar(value=tracks)
-        self.track_list = Listbox(self.__root, height=10, listvariable=tracks_var)
+        self.tracks_var = StringVar(value=[])
+        self.track_list = Listbox(self.__root, height=10, listvariable=self.tracks_var)
         self.track_list.pack()
+        self.track_list.bind("<<ListboxSelect>>", self.track_sel)
 
-        playlist = []
-        playlist_var = StringVar(value=playlist)
-        self.playlist = Listbox(self.__root, height=10, listvariable=playlist_var)
+        self.playlist_var = StringVar(value=[])
+        self.playlist = Listbox(self.__root, height=10, listvariable=self.playlist_var)
+        self.playlist.bind("<<ListboxSelect>>", self.playlist_sel)
+
         self.playlist.pack()
 
         self._state = "ready"
@@ -46,6 +47,22 @@ class PlayerGUI:
         print(evt)
         sel = self.album_list.curselection()[0]
         logger.debug(f"selected {self.albums[sel]}")
+
+
+    def set_tracks(self, tracks):
+        self.tracks = tracks
+        self.tracks_var.set(tracks)
+
+    def track_sel(self, evt):
+        print(evt)
+        sel = self.track_list.curselection()[0]
+        logger.debug(f"selected {self.tracks[sel]}")
+
+    def playlist_sel(self, evt):
+        print(evt)
+        sel = self.playlist.curselection()[0]
+        logger.debug(f"selected {self.tracks[sel]}")
+
 
     def play(self):
         """The play action.
