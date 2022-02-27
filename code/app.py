@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 elif msg["cmd"] == "tracks":
                     logger.debug(f"SETTING: {msg}")
                     gui.set_tracks(msg["data"])
-            
+     
         except Empty:
             pass
 
