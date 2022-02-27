@@ -9,6 +9,10 @@ Designing for concurrency.
 Concurrency can add significant complexity to the run-time environment.  However, used appropriately
 it can simplify the design and implementation of software and produce better performance.
 
+## GUI
+
+<http://tkdocs.com/tutorial/morewidgets.html#listbox>
+
 ## Resources
 
 <https://docs.python.org/3/library/queue.html>
