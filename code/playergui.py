@@ -48,7 +48,6 @@ class PlayerGUI:
         sel = self.album_list.curselection()[0]
         logger.debug(f"selected {self.albums[sel]}")
 
-
     def set_tracks(self, tracks):
         self.tracks = tracks
         self.tracks_var.set(tracks)
