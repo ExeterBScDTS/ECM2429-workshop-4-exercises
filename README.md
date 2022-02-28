@@ -67,6 +67,17 @@ This is a more advanced example that uses threads to enable audio playing, datab
 
 [code/app.py](code/app.py)
 
+### Running the example
+
+```sh
+```
+
+### Running the tests
+
+```sh
+> cd code
+> python -m pytest --cov .
+```
 
 ## Resources
 
