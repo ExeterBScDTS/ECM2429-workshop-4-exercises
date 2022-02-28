@@ -1,5 +1,40 @@
 """An example of launching threads.
 """
+from threading import Thread
+from time import sleep
+
+
+def tick_tock_activity(delay):
+    while True:
+        print("tick")
+        sleep(delay)
+
+
+def countdown_activity(end, rate):
+    for i in range(end, -1, -1):
+        print(f"COUNTDOWN {i}")
+        sleep(rate)
+
+
+def do_tick(args) -> None:
+    delay = 1.0
+    if len(args) > 0:
+        delay = float(args[0])
+    print(f"tick-tock with interval {delay} starting...")
+    t = Thread(target=tick_tock_activity, args=(delay,), daemon=True)
+    t.start()
+
+
+def do_count(args) -> None:
+    end = 10
+    rate = 1.0
+    if len(args) > 0:
+        end = int(args[0])
+    if len(args) > 1:
+        rate = float(args[1])
+    print(f"countdown to {end} (rate {rate}) starting...")
+    t = Thread(target=countdown_activity, args=(end, rate), daemon=False)
+    t.start()
 
 
 def print_help() -> None:
@@ -7,8 +42,8 @@ def print_help() -> None:
     """
     print("Enter one of the following commands:")
     print("\thelp\tdisplays this message")
-    print("\ttick [interval=1]\tstart a tick-tock daemon")
-    print("\tcount [end=10] [rate=1][\tstart a countdown")
+    print("\ttick [interval=1.0]\tstart a tick-tock daemon")
+    print("\tcount [end=10] [rate=1.0][\tstart a countdown")
     print("\tquit\tquit when all countdowns have completed")
     print()
 
@@ -24,29 +59,6 @@ def print_unknown(command: str) -> None:
     print()
 
 
-def do_tick(args) -> None:
-    """
-    """
-    delay = 1.0
-    if len(args) > 0:
-        delay = float(args[0])
-    print(f"tick-tock with interval {delay} starting...")
-    pass
-
-
-def do_count(args) -> None:
-    """
-    """
-    end = 10.0
-    rate = 1.0
-    if len(args) > 0:
-        end = float(args[0])
-    if len(args) > 1:
-        rate = float(args[1])
-    print(f"countdown to {end} (rate {rate}) starting...")
-    pass
-
-
 def mainloop():
     """An even-loop that takes a typed command using the input() statement.
     """
@@ -54,9 +66,12 @@ def mainloop():
         # Wait here until the user types a command
         input_text = input("enter a command > ")
 
-        args = input_text.split()
-        command = args[0]
-        args = args[1:]
+        try:
+            args = input_text.split()
+            command = args[0]
+            args = args[1:]
+        except IndexError:
+            continue
 
         if command == "help":
             print_help()
@@ -65,7 +80,7 @@ def mainloop():
             break
         elif command == "tick":
             do_tick(args)
-        elif command == "count":
+        elif command in ("count", "countdown"):
             do_count(args)
         else:
             print_unknown(command)

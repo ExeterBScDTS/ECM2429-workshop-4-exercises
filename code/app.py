@@ -4,12 +4,12 @@ import logging
 from playergui import PlayerGUI
 from musicdb import MusicDB
 from wavplay import WavPlay
-import threading
 from threading import Thread
 from queue import Empty, Queue
 from time import sleep
 
 logger = logging.getLogger(__name__)
+
 
 class PlayerThread(Thread):
     """
@@ -26,7 +26,7 @@ class PlayerThread(Thread):
         """
         """
         queueIn: Queue = self.args[0]
-        queueOut: Queue = self.args[1]
+        #  queueOut: Queue = self.args[1]
         while True:
             try:
                 msg = queueIn.get_nowait()
@@ -40,11 +40,11 @@ class PlayerThread(Thread):
             except Empty:
                 pass
             if self.player.paused:
-                #queueOut.put("paused")
+                #  queueOut.put("paused")
                 sleep(0.1)
             else:
                 self.player.play()
-                #queueOut.put("playing")
+                #  queueOut.put("playing")
 
 
 class DatabaseThread(Thread):
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 elif msg["cmd"] == "tracks":
                     logger.debug(f"SETTING: {msg}")
                     gui.set_tracks(msg["data"])
-     
+
         except Empty:
             pass
 
