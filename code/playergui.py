@@ -14,27 +14,38 @@ class PlayerGUI:
         self.__root = Tk()
         self.__root.title(__name__)
 
+        label0 = Label(self.__root, text="    ")
+        label0.grid(column=0, row=0)
+
+        label1 = Label(self.__root, text="Albums")
+        label1.grid(column=1, row=0)
+
+        label2 = Label(self.__root, text="Tracks")
+        label2.grid(column=2, row=0)
+
+        label3 = Label(self.__root, text="Playlist")
+        label3.grid(column=3, row=0)
+
         self.start_button = Button(self.__root, text="Play", command=self.play)
-        self.start_button.pack()
+        self.start_button.grid(column=0, row=1)
 
         self.stop_button = Button(self.__root, text="Pause", command=self.pause)
-        self.stop_button.pack()
+        self.stop_button.grid(column=0, row=2)
 
         self.albums_var = StringVar(value=[])
         self.album_list = Listbox(self.__root, height=10, listvariable=self.albums_var)
-        self.album_list.pack()
+        self.album_list.grid(column=1, row=1, rowspan=2)
         self.album_list.bind("<<ListboxSelect>>", self.album_sel)
-        #lbox.bind("<Double-1>", lambda e: invokeAction(lbox.curselection()))
 
         self.tracks_var = StringVar(value=[])
         self.track_list = Listbox(self.__root, height=10, listvariable=self.tracks_var)
-        self.track_list.pack()
+        self.track_list.grid(column=2, row=1, rowspan=2)
         self.track_list.bind("<<ListboxSelect>>", self.track_sel)
 
         self.playlist = []
         self.playlist_var = StringVar(value=self.playlist)
         self.playlist_list = Listbox(self.__root, height=10, listvariable=self.playlist_var)
-        self.playlist_list.pack()
+        self.playlist_list.grid(column=3, row=1, rowspan=2)
         self.playlist_list.bind("<<ListboxSelect>>", self.playlist_sel)
 
         self.db_cmd = None

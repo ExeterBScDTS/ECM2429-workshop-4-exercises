@@ -112,7 +112,7 @@ if __name__ == "__main__":
         try:
             msg = feedbackQueue.get_nowait()
             feedbackQueue.task_done()
-            logger.debug(f"feedback: {msg}")
+            logger.debug(f"feedback: {msg['from']}/{msg['cmd']}")
             if msg["from"] == "db":
                 if msg["cmd"] == "albums":
                     gui.set_albums(msg["data"])

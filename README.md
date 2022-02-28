@@ -4,9 +4,13 @@ Python programming exercises
 
 ## Concurrency
 
+Concurrency means a program is doing mutliple things at the same time.  In computing this is achieved through the use of multiple processors or time-slicing, sharing a single processor between tasks by rapidly switching between them.
+
+Mutliple processors can also be used for *parallel-processing* where the same task, but with different data, is run on each processor to reduce the time taken to compute results. 
 
 ## Python threading
 
+In Python there are various ways of creating programs with concurrent tasks.  The most popular is threading, and this is used in other programming languages.  In a threaded program the code is shared between all the threads, there is no need to write separate units of code for each one, but there will be several parts of the program being executed at the same time.
 
 ## Threads example
 
@@ -41,7 +45,7 @@ print("Main ends.")
 ```
 
 Creating many threads is easy.  The program will end when all non-daemon threads have finished.  The main program is a non-daemon
-thread.
+thread.  However, it can be very hard to rationalise what a program with many threads is doing at any point in time, and extremely difficult to debug if it doesn't behave as expected.  Therefore we need to think carefully about our design.
 
 ## Using threads with an event-loop
 
@@ -69,11 +73,15 @@ This is a more advanced example that uses threads to enable audio playing, datab
 
 ### Running the example
 
+Must be in the same directory (folder) as music.db
 ```sh
+cd code
+python app.py
 ```
 
 ### Running the tests
 
+There are some basic tests in code/tests.  Pytest should find these automatically if PYTHON_PATH is correct.  The easiest way to ensure this is to run using ```python -m```
 ```sh
 > cd code
 > python -m pytest --cov .
