@@ -59,15 +59,17 @@ class PlayerGUI:
     def track_sel(self, evt):
         print(evt)
         sel = self.track_list.curselection()[0]
-        logger.debug(f"selected {self.tracks[sel]}")
+        logger.debug(f"Track selected {self.tracks[sel]}")
         self.playlist.append(self.tracks[sel])
         self.playlist_var.set(self.playlist)
 
 
     def playlist_sel(self, evt):
         print(evt)
-        sel = self.playlist.curselection()[0]
-        logger.debug(f"selected {self.tracks[sel]}")
+        sel = self.playlist_list.curselection()[0]
+        logger.debug(f"Playlist item selected {self.playlist[sel]}")
+        self.playlist.pop(sel)
+        self.playlist_var.set(self.playlist)
 
 
     def play(self):
