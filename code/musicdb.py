@@ -47,3 +47,10 @@ class MusicDB:
             for i in cur:
                 tracks.append(i[0])
         return tuple(tracks)
+
+    def get_content(self, track_name: str) -> bytes:
+        with sqlite3.connect(self.__connection_uri, uri=True) as con:
+            cur = con.cursor()
+            cur.execute('SELECT content FROM tunes WHERE name=?', (track_name,))
+            row = cur.fetchone()
+            return row[0]

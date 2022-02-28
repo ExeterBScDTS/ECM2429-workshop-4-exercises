@@ -72,7 +72,9 @@ class DatabaseThread(Thread):
             elif msg["cmd"] == "tracks":
                 tracks = self.db.get_track_names(msg["data"])
                 queueOut.put({"from": "db", "cmd": "tracks", "data": tracks})
-                print(tracks)
+            elif msg["cmd"] == "content":
+                content = self.db.get_content(msg["data"])
+                queueOut.put({"from": "db", "cmd": "content", "data": content})
 
 
 if __name__ == "__main__":
@@ -94,10 +96,16 @@ if __name__ == "__main__":
     # directly access objects in other threads.
 
     def body():
-        if gui._state == "paused":
+        if gui._state == "load":
+            gui._state = "play"
+            next_tune = gui.next_play()
+            if next_tune:
+                dbQueue.put({"cmd": "content", "data": next_tune})
+        elif gui._state == "paused":
             playQueue.put({"cmd": "pause"})
         else:
             playQueue.put({"cmd": "play"})
+
         if gui.db_cmd:
             dbQueue.put({"cmd": gui.db_cmd, "data": gui.db_data})
             gui.db_cmd = None
@@ -111,13 +119,15 @@ if __name__ == "__main__":
                 elif msg["cmd"] == "tracks":
                     logger.debug(f"SETTING: {msg}")
                     gui.set_tracks(msg["data"])
+                elif msg["cmd"] == "content":
+                    playQueue.put({"cmd": "load", "data": msg["data"]})
 
         except Empty:
             pass
 
     # If no database available can insert data to play like this -
-    with open("sample.wav", "rb") as f:
-        playQueue.put({"cmd": "load", "data": f.read()})
+    # with open("sample.wav", "rb") as f:
+    #    playQueue.put({"cmd": "load", "data": f.read()})
 
     dbQueue.put({"cmd": "albums"})
     gui.set_after(200, body)

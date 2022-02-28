@@ -40,6 +40,7 @@ class PlayerGUI:
         self.db_cmd = None
         self.db_data = None
         self._state = "ready"
+        self.__next_tune = 0
 
     def set_albums(self, albums):
         self.albums = albums
@@ -70,13 +71,19 @@ class PlayerGUI:
         logger.debug(f"Playlist item selected {self.playlist[sel]}")
         self.playlist.pop(sel)
         self.playlist_var.set(self.playlist)
-
+    
+    def next_play(self):
+        if len(self.playlist) > 0:
+            self.__next_tune += 1
+            return self.playlist[self.__next_tune - 1]
+        else:
+            return None
 
     def play(self):
         """The play action.
         """
         logger.debug("play")
-        self._state = "play"
+        self._state = "load"
 
     def pause(self):
         """The pause action.

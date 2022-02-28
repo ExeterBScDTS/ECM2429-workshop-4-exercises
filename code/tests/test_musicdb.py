@@ -3,9 +3,9 @@ import musicdb
 
 
 @pytest.fixture
-def gui():
-    return musicdb.MusicDB()
+def db():
+    return musicdb.MusicDB("file://BAD")
 
 
-def test_MusicDB():
-    assert True
+def test_MusicDB(db):
+    assert isinstance(db, musicdb.MusicDB)
