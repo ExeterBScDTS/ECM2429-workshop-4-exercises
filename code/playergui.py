@@ -31,11 +31,12 @@ class PlayerGUI:
         self.track_list.pack()
         self.track_list.bind("<<ListboxSelect>>", self.track_sel)
 
-        self.playlist_var = StringVar(value=[])
-        self.playlist = Listbox(self.__root, height=10, listvariable=self.playlist_var)
-        self.playlist.bind("<<ListboxSelect>>", self.playlist_sel)
+        self.playlist = []
+        self.playlist_var = StringVar(value=self.playlist)
+        self.playlist_list = Listbox(self.__root, height=10, listvariable=self.playlist_var)
+        self.playlist_list.pack()
+        self.playlist_list.bind("<<ListboxSelect>>", self.playlist_sel)
 
-        self.playlist.pack()
         self.db_cmd = None
         self.db_data = None
         self._state = "ready"
@@ -59,6 +60,9 @@ class PlayerGUI:
         print(evt)
         sel = self.track_list.curselection()[0]
         logger.debug(f"selected {self.tracks[sel]}")
+        self.playlist.append(self.tracks[sel])
+        self.playlist_var.set(self.playlist)
+
 
     def playlist_sel(self, evt):
         print(evt)
