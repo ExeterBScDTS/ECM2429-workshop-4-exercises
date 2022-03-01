@@ -18,7 +18,7 @@ Here is a simple example where a thread is created to run a countdown.  Note tha
 both the main program and the thread created using the threading module use
 sleep() but doing so only pauses the relevant part of the program.
 
-[threads_demo/countdowwn.py](threads_demo/countdown.py)
+[threads_demo/countdown.py](threads_demo/countdown.py)
 
 ```python
 from threading import Thread
